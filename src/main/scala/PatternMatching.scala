@@ -18,7 +18,7 @@ object PatternMatching extends App {
 
       symbol match {
         case Rest(duration) => duration
-        //        case Note(name, duration, octave) => duration
+        case Note(_, duration, _) => duration // remove
       }
   }
 }
