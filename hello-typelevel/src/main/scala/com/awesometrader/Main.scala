@@ -1,33 +1,28 @@
 package com.awesometrader
 
+import cats.effect._
 import cats.implicits._
-import cats.effect.{ContextShift, ExitCode, IO, IOApp}
-import db.{AccountRepository, AwesomeDatabase}
+import com.awesometrader.db.{AccountRepository, Database}
+import com.awesometrader.resources.Accounts
 import org.http4s.implicits._
+import fs2.Stream
 import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
-import resources.{Accounts, Orders}
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object Main extends IOApp {
 
-  def run(args: List[String]): IO[ExitCode] =
+  override def run(args: List[String]): IO[ExitCode] =
+    stream[IO].compile.drain.as(ExitCode.Success)
+
+  def stream[F[_]: ConcurrentEffect: ContextShift: Timer]: Stream[F, ExitCode] =
     for {
-      tx <- AwesomeDatabase.transactor
-      accountsResource = Accounts[IO](AccountRepository(tx)).routes
-      ordersResource = Orders[IO].routes
-      routes = Router(accountsResource, ordersResource).orNotFound
-      exitCode <- BlazeServerBuilder[IO]
-        .bindHttp(8080, "localhost")
-        .withHttpApp(routes)
-        .serve
-        .compile
-        .drain
-        .as(ExitCode.Success)
-    } yield exitCode
-
-
-  implicit val cs: ContextShift[IO] = IO.contextShift(global)
+        xa <- Stream.eval(Database.transactor().pure[F])
+        ordersResource = Accounts[F](AccountRepository(xa))
+        routes = Router(ordersResource.routes).orNotFound
+        exitCode <- BlazeServerBuilder[F]
+          .bindHttp(8080, "localhost")
+          .withHttpApp(routes)
+          .serve
+      } yield exitCode
 
 }

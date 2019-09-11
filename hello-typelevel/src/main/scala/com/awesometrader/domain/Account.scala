@@ -7,7 +7,7 @@ sealed class AccountState
 case class Created() extends AccountState
 case class Closed() extends AccountState
 
-case class Account[S <: AccountState](val state: S,
+case class Account(val state: AccountState,
                                       val id: AccountId,
                                       val ssn: Ssn,
                                       val email: Email,
@@ -19,11 +19,11 @@ object Account {
   def create(id: AccountId,
              ssn: Ssn,
              email: Email,
-             currency: Currency): Account[Created] =
+             currency: Currency): Account =
     new Account(Created(), id, ssn, email, currency, 0)
 
-  def close(in: Account[Created],
-            reason: String): Either[StateTransitionError, Account[Closed]] = {
+  def close(in: Account,
+            reason: String): Either[StateTransitionError, Account] = {
     if (in.balance > 0)
       Left(StateTransitionError("Cannot close account with positive balance"))
     else

@@ -1,14 +1,14 @@
 package com.awesometrader.db
 
-import cats.effect.{IO, Sync}
-import com.awesometrader.domain.{Account, Created}
-import doobie.hikari.HikariTransactor
+import cats.effect.Sync
+import com.awesometrader.domain.Account
+import doobie.util.transactor.Transactor
 
-class AccountRepository[F[_]](transactor: HikariTransactor[IO]) {
+class AccountRepository[F[_]: Sync](xa: Transactor[F]) {
 
-  def save(account: Account[Created]): F[Account[Created]] = ???
+  def save(account: Account): F[Account] = ???
 }
 
 object AccountRepository {
-  def apply[F[_]](transactor: HikariTransactor[IO]): AccountRepository[F] = new AccountRepository[F](transactor)
+  def apply[F[_]: Sync](xa: Transactor[F]): AccountRepository[F] = new AccountRepository[F](xa)
 }

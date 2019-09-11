@@ -1,9 +1,10 @@
-ThisBuild / scalaVersion := "2.12.7"
+ThisBuild / scalaVersion := "2.12.8"
 ThisBuild / organization := "com.awesome"
 
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.5"
-val http4sVersion = "0.20.0-M7"
-val circecVersion = "0.10.0"
+val http4sVersion = "0.20.10"
+val circeVersion = "0.11.1"
+val catsVersion = "2.0.0"
 
 lazy val hello = (project in file ("."))
   .aggregate(helloTypelevel)
@@ -24,13 +25,13 @@ lazy val helloTypelevel = (project in file ("hello-typelevel"))
       "org.http4s" %% "http4s-blaze-client" % http4sVersion,
       "org.http4s" %% "http4s-circe" % http4sVersion,
 
-      "io.circe" %% "circe-core" % circecVersion,
-      "io.circe" %% "circe-generic" % circecVersion,
+      "io.circe" %% "circe-core" % circeVersion,
+      "io.circe" %% "circe-generic" % circeVersion,
 
       "joda-time" % "joda-time" % "2.10.1",
 
-      "org.typelevel" %% "cats-core" % "1.4.0",
-      "org.typelevel" %% "cats-effect" % "1.0.0",
+      "org.typelevel" %% "cats-core" % catsVersion,
+      "org.typelevel" %% "cats-effect" % catsVersion,
 
       "org.tpolecat" %% "doobie-core" % "0.6.0",
       "org.tpolecat" %% "doobie-h2" % "0.6.0",
