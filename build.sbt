@@ -1,17 +1,17 @@
-ThisBuild / scalaVersion := "2.13.0"
+ThisBuild / scalaVersion := "2.12.10"
 ThisBuild / organization := "com.awesome"
 
-val scalaTest = "org.scalatest" %% "scalatest" % "3.0.5"
-val http4sVersion = "0.21.0-M4"
-val circeVersion = "0.12.1"
-val catsVersion = "2.0.0"
-val scalaticVersion = "3.1.0-RC2"
-val doobieVersion = "0.8.0-M2"
+lazy val http4sVersion = "0.21.0-M4"
+lazy val circeVersion = "0.12.1"
+lazy val catsVersion = "2.0.0"
+lazy val scalaticVersion = "3.1.0-RC2"
+lazy val doobieVersion = "0.8.0-M2"
+lazy val akkaVersion = "2.6.0-RC1"
 
 lazy val hello = (project in file ("."))
   .aggregate(helloTypelevel)
   .settings(
-    name := "hello-scala-playground"
+    name := "hello-scala"
   )
 
 lazy val helloTypelevel = (project in file ("hello-typelevel"))
@@ -20,7 +20,7 @@ lazy val helloTypelevel = (project in file ("hello-typelevel"))
     libraryDependencies ++= Seq(
 
       "org.scalactic" %% "scalactic" % scalaticVersion,
-      "org.scalatest" %% "scalatest" % scalaticVersion % "test",
+      "org.scalatest" %% "scalatest" % scalaticVersion % Test,
 
       "org.http4s" %% "http4s-dsl" % http4sVersion,
       "org.http4s" %% "http4s-blaze-server" % http4sVersion,
@@ -41,4 +41,19 @@ lazy val helloTypelevel = (project in file ("hello-typelevel"))
 
       "org.scalamock" %% "scalamock" % "4.4.0" % Test
     ),
+  )
+
+
+lazy val helloAkka = (project in file ("hello-akka"))
+  .settings(
+    name := "hello-akka",
+
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+      "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
+      "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+      "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime
+
+    )
+
   )
